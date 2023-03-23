@@ -24,6 +24,7 @@ module.exports = {
        deposit: {
          type: Sequelize.INTEGER,
          allowNull: false,
+         min: 0,
        },
        
        password: {

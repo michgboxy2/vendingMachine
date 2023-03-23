@@ -4,7 +4,6 @@ const jwt = require('jsonwebtoken');
 
 const db = require('../db');
 
-const { createClient } = require('redis');
 const rand = require('rand-token');
 
 const moment = require('moment-timezone');
@@ -89,17 +88,12 @@ exports.signIn = async (req, res, next) => {
         res.status(200).send({token, refreshToken });
         
     } catch (error) {
-        console.log(error);
-        return res.status(500).send({message: error, status: "failed"});
+        return res.status(500).send({message: error.message, status: "failed"});
     }
 }
 
-exports.logout = async (req, res, next) => {
+exports.logoutAll = async (req, res, next) => {
     try {
-        // const token = req.headers.authorization ? req.headers.authorization.replace('Bearer ', '') : null;
-
-        // const { id } = req.query;
-
         const { refreshToken, username } = req.body;
 
         if(!refreshToken) {
@@ -125,7 +119,23 @@ exports.logout = async (req, res, next) => {
         return res.status(400).send({message: "invalid token", status: "failed"});
         
     } catch (error) {
-        console.log(error);
+        return res.status(500).send({message: error, status: "failed"});
+    }
+}
+exports.logout = async (req, res, next) => {
+    try {
+        const { username } = req.body;
+
+        if(!username) {
+            return res.status(400).send({message: "username is required"});
+        }
+
+            await db.session.destroy({where: { username }});
+
+            return res.sendStatus(200);
+
+        
+    } catch (error) {
         return res.status(500).send({message: error, status: "failed"});
     }
 }

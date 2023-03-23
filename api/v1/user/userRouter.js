@@ -2,19 +2,23 @@
 
 const express = require('express'),
       router = express.Router(),
+      { validate, validateLogin, validateSignUp } = require('../utils/validator'),
       { signUp, updateUser, getAllUsers, getUser, deleteUser } = require('./userController'),
-      { signIn, logout, authenticate } = require('../auth/authorization');
+      { signIn, logout, authenticate, logoutAll } = require('../auth/authorization');
 
 
       router.route('/')
-      .post(signUp)
+      .post(validateSignUp(), validate, signUp)
       .get(authenticate, getAllUsers);
 
       router.route('/login')
-      .post(signIn);
+      .post(validateLogin(), validate, signIn);
 
       router.route('/logout')
       .post(logout);
+
+      router.route('/logout/all')
+      .post(logoutAll);
     
       router.route('/:id')
       .patch(authenticate, updateUser)

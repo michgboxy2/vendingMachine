@@ -16,6 +16,60 @@ exports.validateProduct = () => {
     ]
 }
 
+exports.validatePurchase = () => {
+  return [
+    body('productId').not().isEmpty().withMessage('productId is required'),
+    body('productId').isNumeric().withMessage('productId should be an integer'),
+    body('quantity').not().isEmpty().withMessage('quantity is required'),
+    body('quantity').isNumeric().withMessage('quantity should be an integer'),
+    body('quantity').custom(value => {
+      if(value <= 0) {
+        return Promise.reject('minimum quantity is 1')
+      }
+
+      return true;
+    }),
+
+
+
+  ]
+}
+
+exports.validateDeposit = () => {
+  return [
+    body('deposit').not().isEmpty().withMessage('deposit is required'),
+    body('deposit').isNumeric().withMessage('deposit should be an integer'),
+    body('deposit').custom(value => {
+      if (![5, 10, 20, 50, 100].includes(Number(value))){
+        return Promise.reject('Only deposits of 5, 10, 20, 50 and 100 cent coins are allowed')
+      }
+
+      return true;
+    }),
+  ]
+}
+
+exports.validateLogin = () => {
+  return [
+    body('username').not().isEmpty().withMessage('username is required'),
+    body('password').not().isEmpty().withMessage('password is required'),
+  ]
+}
+
+exports.validateSignUp = () => {
+  return [
+    body('username').not().isEmpty().withMessage('username is required'),
+    body('password').not().isEmpty().withMessage('password is required'),
+    body('role').not().isEmpty().withMessage('password is required'),
+    body('role').custom(value => {
+      if(!['seller', 'buyer'].includes(value)){
+        return Promise.reject('Only seller and buyer roles are allowed')
+      }
+      return true;
+    }),
+  ]
+}
+
 
 exports.validate = (req, res, next) => {
     const errors = validationResult(req)

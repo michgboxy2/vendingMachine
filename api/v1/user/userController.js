@@ -5,22 +5,10 @@ exports.signUp = async (req, res, next) => {
     try {
         const { username, password, role } = req.body;
 
-        if(!username) {
-            return res.status(400).send({message: "username is required", status: "failed"});
-        }
-
-        if(!password) {
-            return res.status(400).send({message: "password is required", status: "failed"});
-        }
-
-        if(!role) {
-            return res.status(400).send({message: "role is required", status: "failed"});
-        }
-
         const doesUsernameExist = await db.user.findOne({where: {username}, attributes: ['username']});
 
         if(doesUsernameExist){
-            return res.status(404).send({message: "username already exists", status: "failed"});
+            return res.status(400).send({message: "username already exists", status: "failed"});
         }
 
         const user = await db.user.create({

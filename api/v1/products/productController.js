@@ -1,7 +1,5 @@
 "use strict";
 const db = require('../db');
-const { validationResult } = require('express-validator');
-
 
 exports.createProducts = async (req, res, next) => {
     try {

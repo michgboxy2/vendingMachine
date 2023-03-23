@@ -25,10 +25,12 @@ sequelize.authenticate().then(() => { console.log('database connection successfu
 
 
 // db.Sequelize = Sequelize;
-// db.sequelize = sequelize;
+db.sequelize = sequelize;
 db.user = require("./user/userModel")(sequelize, Sequelize);
 db.product = require("./products/productModel")(sequelize, Sequelize);
 db.session = require("./sessions/sessionModel")(sequelize, Sequelize);
+db.purchase = require("./purchase/purchaseModel")(sequelize, Sequelize);
+db.deposit = require("./deposit/depositModel")(sequelize, Sequelize);
 
 db.user.hasMany(db.product, {
     as: 'seller',
@@ -38,5 +40,14 @@ db.product.belongsTo(db.user, {
     as: 'seller',
     foreignKey: 'sellerId'
 });
+
+db.user.hasMany(db.deposit);
+db.deposit.belongsTo(db.user);
+
+db.user.hasMany(db.purchase);
+db.purchase.belongsTo(db.user);
+
+db.product.hasMany(db.purchase);
+db.purchase.belongsTo(db.product);
 
 module.exports = db;
