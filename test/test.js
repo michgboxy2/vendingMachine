@@ -2,23 +2,24 @@ const request = require('supertest');
 const chai	= require('chai');
 const expect = chai.expect;
 const app = require('../server/server');
+const { natsWrapper } = require('../api/v1/utils/natsWrapper');
 
-describe.skip('/POST signup', async () => {
-    it.skip("fails if username is not passed", async () => {
+describe('/POST signup', async () => {
+    it("fails if username is not passed", async () => {
         const data = { password: "password" }; 
         const res = await request(app).post('/api/v1/user').send(data);
     
         expect(res.status).equal(422);
     });
 
-    it.skip("fails if password is not passed", async () => {
+    it("fails if password is not passed", async () => {
         const data = { username: "username" }; 
         const res = await request(app).post('/api/v1/user/login').send(data);
     
         expect(res.status).equal(422);
     });
 
-    it.skip("successfully registers a user", async () => {
+    it("successfully registers a user", async () => {
         const data = {
             username: 'king10',
             password: 'password',
@@ -34,7 +35,7 @@ describe.skip('/POST signup', async () => {
 
     });
 
-    it.skip("fails to register a user if username already exists", async () => {
+    it("fails to register a user if username already exists", async () => {
         const data = {
             username: 'king11',
             password: 'password',
@@ -54,7 +55,7 @@ describe.skip('/POST signup', async () => {
           expect(response2.status).equal(400);
     });
 
-    it.skip("gets all users", async () => {
+    it("gets all users", async () => {
         const data = {
             username: 'king10',
             password: 'password',
@@ -81,7 +82,7 @@ describe.skip('/POST signup', async () => {
 
     });
 
-    it.skip("updates user successfully", async () => {
+    it("updates user successfully", async () => {
         const data = {
             username: 'king14',
             password: 'password',
@@ -137,8 +138,8 @@ describe.skip('/POST signup', async () => {
 });
 
 
-describe.skip('/POST LOGIN', async () => {
-    it.skip("fails to login if username is not available", async () => {
+describe('/POST LOGIN', async () => {
+    it("fails to login if username is not available", async () => {
         const data = { username: 'king' };
 
         const response = await request(app)
@@ -148,7 +149,7 @@ describe.skip('/POST LOGIN', async () => {
         expect(response.status).equal(422);
     });
 
-    it.skip("fails to login if password is not available", async () => {
+    it("fails to login if password is not available", async () => {
         const data = { password: "password" };
 
         const response = await request(app)
@@ -158,7 +159,7 @@ describe.skip('/POST LOGIN', async () => {
         expect(response.status).equal(422);
     });
 
-    it.skip("logs in the user", async () => {
+    it("logs in the user", async () => {
         const data = {
             username: 'king21',
             password: 'password',
@@ -181,7 +182,7 @@ describe.skip('/POST LOGIN', async () => {
           expect(login.body).to.have.property('refreshToken');
     });
 
-    it.skip("fails to login the user if the user attempt a second login", async () => {
+    it("fails to login the user if the user attempt a second login", async () => {
         const data = {
             username: 'king22',
             password: 'password',
@@ -213,7 +214,15 @@ describe.skip('/POST LOGIN', async () => {
 });
 
 
-describe.skip('/deposit', async () => {
+describe('/deposit', async () => {
+  before(async () => {
+    await natsWrapper.connect(process.env.CLUSTER_ID, 'bcda', process.env.natHost);
+  });
+
+  after(async () => {
+    await natsWrapper.client.close();
+  });
+
 it('fails to makes a deposit if user is a seller', async () => {
     const depositData = {deposit: 20};
 
@@ -245,7 +254,7 @@ it('successfully makes a deposit if user is a buyer', async () => {
     const depositData = {deposit: 20};
 
     const data = {
-        username: 'king30',
+        username: 'king49',
         password: 'password',
         role: 'buyer'
       };
@@ -265,6 +274,10 @@ it('successfully makes a deposit if user is a buyer', async () => {
         .set('Authorization', `Bearer ${login.body.token}`)
         .send(depositData);
 
+        console.log(response);
+
+        // expect(natsWrapper.client.publish).to.have.been.calledWith('deposit:created');
+
         expect(response.status).equal(200);
         expect(response.body).to.have.property('deposit');
         expect(response.body.deposit).equal(depositData.deposit);
@@ -274,8 +287,17 @@ it('successfully makes a deposit if user is a buyer', async () => {
 
 });
 
-describe.skip('/buy', async () => {
-  it.skip('fails if you are not a buyer', async () => {
+describe('/buy', async () => {
+  before(async () => {
+    await natsWrapper.connect(process.env.CLUSTER_ID, 'buy', process.env.natHost);
+  });
+
+  after(async () => {
+    await natsWrapper.client.close();
+  });
+
+
+  it('fails if you are not a buyer', async () => {
     const depositData = {deposit: 20};
 
     const data = {
@@ -319,7 +341,7 @@ describe.skip('/buy', async () => {
         expect(response.status).equal(401);
   });
 
-  it.skip("fails if you  don't have enough balance", async () => {
+  it("fails if you  don't have enough balance", async () => {
     const depositData = {deposit: 20};
 
     const userdata1 = {
