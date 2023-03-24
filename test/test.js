@@ -274,10 +274,6 @@ it('successfully makes a deposit if user is a buyer', async () => {
         .set('Authorization', `Bearer ${login.body.token}`)
         .send(depositData);
 
-        console.log(response);
-
-        // expect(natsWrapper.client.publish).to.have.been.calledWith('deposit:created');
-
         expect(response.status).equal(200);
         expect(response.body).to.have.property('deposit');
         expect(response.body.deposit).equal(depositData.deposit);
