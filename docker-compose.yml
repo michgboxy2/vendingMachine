@@ -1,6 +1,22 @@
 version: '3.7'
 
 services:
+  app:
+    container_name: app
+    build: ./
+    command: npm start
+    working_dir: /usr/src/vending_machine
+    ports:
+    - "7000:7000"
+    environment: 
+      port: 7000
+      DATABASE_CONNECTION_URL: postgres://postgres:password@postgres:5432/vendingmachine
+    volumes: 
+      - ./:/usr/src/vending_machine
+      
+    links:
+      - postgres
+      - redis
 
   postgres:
     image: postgres:12

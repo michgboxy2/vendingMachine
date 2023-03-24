@@ -1,7 +1,7 @@
 const redis =  require("redis");
 
-const RedisHost = process.env.RedisHost || "127.0.0.1";
-const RedisPort = Number(process.env.RedisPort) || 6379;
+const RedisHost = process.env.RedisHost;
+const RedisPort = process.env.RedisPort;
 
 const client = redis.createClient(RedisPort, RedisHost);
 
