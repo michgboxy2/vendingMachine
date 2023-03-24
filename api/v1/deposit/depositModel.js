@@ -24,7 +24,7 @@ module.exports = (sequelize, Sequelize) => {
         updatedAt: 'updatedAt',
         createdAt: 'createdAt',
         deletedAt: 'deletedAt',
-        tableName: 'products'
+        tableName: 'deposit'
     });
 
     return Deposit;
