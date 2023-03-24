@@ -1,6 +1,11 @@
 "use strict";
 const db = require('../db');
 
+const { Publisher } = require('../utils/base-publisher');
+const { natsWrapper } = require('../utils/natsWrapper');
+
+const { subject } = require('../utils/purchase-constants');
+
 const calculateChange = (deposit, spent) => {
     const coinValues = [100, 50, 20, 10, 5];
     const coinCounts = [];
@@ -62,6 +67,8 @@ exports.makePurchase = async (req, res, next) => {
             
             await user.update({ deposit: balance }, { transaction: t });      
         });
+
+        await new Publisher(natsWrapper.client).publish(subject, JSON.stringify({ productId, quantity, totalSpent: totalPurchase, userId: user.id }));
 
 
         res.status(200).send({
