@@ -117,7 +117,6 @@ exports.deleteUser = async (req, res, next) => {
         res.status(200).send(user);
         
     } catch (error) {
-        console.log(error);
         return res.status(500).send({message: error, status: "failed"});
     }
 }
