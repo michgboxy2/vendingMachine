@@ -17,5 +17,50 @@ services:
     ports:
       - '6379:6379'
 
+  nats:
+    image: nats-streaming:0.17.0
+    ports:
+        - "4222:4222"
+        - "18222:8222"
+    command:
+        - "--cluster"
+        - "nats://0.0.0.0:6222"
+        - "--cluster_id"
+        - nats-streaming
+        - "--clustered"
+        - "--cluster_bootstrap"
+        - "--cluster_log_path"
+        - /data/log
+        - "--cluster_node_id"
+        - nats-streaming-1
+        - "--cluster_raft_logging"
+        - "--debug"
+        - "--dir"
+        - /data/msg
+        - "--http_port"
+        - "8222"
+        - "--port"
+        - "4222"
+        - "--store"
+        - file
+        - "--stan_debug"
+        - "--hb_interval"
+        - 2s
+        - "--hb_fail_count"
+        - "1"
+        - "--hb_timeout"
+        - 5s
+    volumes:
+        - "./nats-streaming-1:/data"
+    networks:
+        - main
+networks:
+  main:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.30.255.0/24
+      driver: default
+    
 volumes:
   pgdata:
