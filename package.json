@@ -19,6 +19,7 @@
     "express-validator": "^6.15.0",
     "jsonwebtoken": "^9.0.0",
     "moment-timezone": "^0.5.41",
+    "node-nats-streaming": "^0.3.2",
     "pg": "^8.10.0",
     "rand-token": "^1.0.1",
     "redis": "^4.6.5",
