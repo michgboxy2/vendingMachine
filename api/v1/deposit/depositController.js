@@ -1,6 +1,11 @@
 "use strict";
 const db = require('../db');
 
+const { Publisher } = require('../utils/base-publisher');
+const { natsWrapper } = require('../utils/natsWrapper');
+
+const { subject } = require('../utils/deposit-constants');
+
 exports.makeDeposit = async (req, res, next) => {
     try {
         const { deposit } = req.body;
@@ -14,13 +19,16 @@ exports.makeDeposit = async (req, res, next) => {
         
         await user.update({ deposit: totalDeposit });
 
+        await new Publisher(natsWrapper.client).publish(subject, JSON.stringify({ deposit, userId: id }));
+
         res.status(200).send(user);
         
     } catch (error) {
-        console.log(error);
         return res.status(500).send({message: "something went wrong", status: "failed"});
     }
 }
+
+
 
 exports.reset = async (req, res, next) => {
     try {
