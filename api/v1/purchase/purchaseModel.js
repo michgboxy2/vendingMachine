@@ -15,6 +15,11 @@ module.exports = (sequelize, Sequelize) => {
             allowNull: false,
         },
 
+        totalSpent: {
+            type: Sequelize.INTEGER,
+            allowNull: false,
+        },
+
         productId: {
             type: Sequelize.INTEGER,
             allowNull: false,
@@ -29,7 +34,7 @@ module.exports = (sequelize, Sequelize) => {
         updatedAt: 'updatedAt',
         createdAt: 'createdAt',
         deletedAt: 'deletedAt',
-        tableName: 'products'
+        tableName: 'purchases'
     });
 
     return Purchase;
