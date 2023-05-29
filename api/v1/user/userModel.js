@@ -1,6 +1,6 @@
 'use strict';
 
-const bcrypt = require('bcrypt');
+const argon2 = require('argon2');
 
 module.exports = (sequelize, Sequelize) => {
     const User = sequelize.define('user', {
@@ -56,11 +56,11 @@ module.exports = (sequelize, Sequelize) => {
     
     User.prototype.generatePasswordHash = async function() {
         const saltRounds = 10;
-        return bcrypt.hash(this.password, saltRounds);
+        return argon2.hash(this.password, saltRounds);
     };
     
     User.prototype.validatePassword = async function(password) {
-        return await bcrypt.compare(password, this.password);
+        return await argon2.compare(password, this.password);
     };
 
     return User;
